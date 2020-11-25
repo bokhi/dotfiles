@@ -32,7 +32,10 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '((clojure :variables
+   '(
+     markdownhtml
+     yaml
+     (clojure :variables
               clojure-enable-fancify-symbols t
               clojure-enable-clj-refactor t
               clojure-enable-linters '(clj-kondo joker)
@@ -115,6 +118,7 @@ This function should only modify configuration layer settings."
                                             jupyter
                                             (which-key :location (recipe :fetcher github
                                                                          :repo "justbur/emacs-which-key"))
+                                            direnv
                                             ;; (helm-swoop :location (recipe :fetcher github
                                             ;;                               :repo "ashiklom/helm-swoop"))
 )
@@ -274,7 +278,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; Default font or prioritized list of fonts.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 8.0
+                               :size 10
                                :weight normal
                                :width normal)
 
@@ -571,6 +575,15 @@ you should place your code here."
       (define-key evil-normal-state-map "gt" nil)
       (define-key evil-normal-state-map "gT" nil)))
 
+  ;; https://gitter.im/syl20bnr/spacemacs?at=5cf2b08dff3f016baa89e15e
+  (use-package direnv
+    :demand t
+    :config
+    (direnv-mode)
+    (setq direnv-always-show-summary nil)
+    :hook
+    ((prog-mode) . direnv-update-environment))
+
 
   (defun disable-sp-hippie-advice (&rest _)
     (setq smartparens-mode-original-value smartparens-mode)
@@ -687,6 +700,8 @@ you should place your code here."
      (clojure . t)
      ))
 
+  (setq clojure-toplevel-inside-comment-form t)
+  (setq cljr-warn-on-eval nil)
   (spacemacs/declare-prefix "o" "custom")
   (spacemacs/set-leader-keys "oc" 'org-columns)
   (spacemacs/set-leader-keys "od" 'magit-file-dispatch)
