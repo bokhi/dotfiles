@@ -51,6 +51,8 @@ This function should only modify configuration layer settings."
      shell-scripts
      shell
      deft
+     (plantuml :variables
+               plantuml-default-exec-mode 'executable)
      imenu-list
      (auto-completion :variables
                       auto-completion-enable-help-tooltip t
