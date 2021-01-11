@@ -32,8 +32,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
-     markdownhtml
+   '(javascript
+     ;; markdownhtml
      yaml
      (clojure :variables
               clojure-enable-fancify-symbols t
@@ -280,7 +280,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; Default font or prioritized list of fonts.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 10
+                               :size 12
                                :weight normal
                                :width normal)
 
@@ -707,8 +707,13 @@ you should place your code here."
   (spacemacs/declare-prefix "o" "custom")
   (spacemacs/set-leader-keys "oc" 'org-columns)
   (spacemacs/set-leader-keys "od" 'magit-file-dispatch)
-
-
+  (setq magit-save-repository-buffers 'dontask)
+  (setq cider-save-file-on-load t)
+  (setq clojure-align-forms-automatically t)
+  (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+  (spacemacs/toggle-highlight-long-lines-globally-on)
+  ;; (add-hook 'clojure-mode-hook #'spacemacs/toggle-highlight-long-lines-on)
+  (setq clojure-indent-style 'align-arguments)
 
   (spacemacs/declare-prefix-for-mode 'python-mode "o" "custom")
   (spacemacs/set-leader-keys-for-major-mode 'python-mode "og" 'dumb-jump-go)
@@ -788,6 +793,8 @@ If region is active open all links in region."
   (define-key evil-normal-state-map
     (kbd "C-S-u") 'evil-scroll-up-other-window)
 
+
+
   (with-eval-after-load 'scroll-all
     (defadvice scroll-all-check-to-scroll (after evil-scroll-all-check-to-scroll activate)
       (cond
@@ -854,9 +861,10 @@ This function is called at the very end of Spacemacs initialization."
  '(lsp-enable-snippet nil)
  '(magit-diff-refine-hunk 'all)
  '(package-selected-packages
-   '(package-lint flycheck-elsa emr clang-format list-utils packed org-roam emacsql-sqlite3 selectric-mode lsp-treemacs cider anaconda-mode iedit magit pythonic bind-key rjsx-mode nodejs-repl livid-mode json-navigator hierarchy js2-refactor js-doc company-tern tern evil-adjust clojure-snippets cider-eval-sexp-fu queue parseedn clojure-mode parseclj a slime-company slime common-lisp-snippets csv-mode dap-mode bui tree-mode gnu-elpa-keyring-update web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode helm-css-scss haml-mode emmet-mode counsel-css counsel swiper ivy company-web web-completion-data add-node-modules-path ob-ipython dash-functional ein skewer-mode polymode js2-mode jupyter websocket simple-httpd zmq eros nov esxml stickyfunc-enhance srefactor beacon litable command-log-mode sql-indent keyfreq evil-replace-with-register annoying-arrows-mode evil-text-object-python flycheck-pycheckers yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil traad toc-org symon symbol-overlay string-inflection spaceline-all-the-icons smeargle sicp shell-pop restart-emacs rainbow-delimiters pytest pyenv-mode py-isort popwin pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless mwim multi-term move-text magit-svn magit-gitflow macrostep lorem-ipsum live-py-mode link-hint jinja2-mode insert-shebang indent-guide importmagic ibuffer-projectile hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist geiser fuzzy forge font-lock+ flycheck-pos-tip flycheck-package flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish diff-hl deft define-word cython-mode counsel-projectile copy-as-format company-statistics company-shell company-quickhelp company-ansible company-anaconda column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-compile ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
+   '(tide typescript-mode import-js grizzl counsel-gtags package-lint flycheck-elsa emr clang-format list-utils packed org-roam emacsql-sqlite3 selectric-mode lsp-treemacs cider anaconda-mode iedit magit pythonic bind-key rjsx-mode nodejs-repl livid-mode json-navigator hierarchy js2-refactor js-doc company-tern tern evil-adjust clojure-snippets cider-eval-sexp-fu queue parseedn clojure-mode parseclj a slime-company slime common-lisp-snippets csv-mode dap-mode bui tree-mode gnu-elpa-keyring-update web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode helm-css-scss haml-mode emmet-mode counsel-css counsel swiper ivy company-web web-completion-data add-node-modules-path ob-ipython dash-functional ein skewer-mode polymode js2-mode jupyter websocket simple-httpd zmq eros nov esxml stickyfunc-enhance srefactor beacon litable command-log-mode sql-indent keyfreq evil-replace-with-register annoying-arrows-mode evil-text-object-python flycheck-pycheckers yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil traad toc-org symon symbol-overlay string-inflection spaceline-all-the-icons smeargle sicp shell-pop restart-emacs rainbow-delimiters pytest pyenv-mode py-isort popwin pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless mwim multi-term move-text magit-svn magit-gitflow macrostep lorem-ipsum live-py-mode link-hint jinja2-mode insert-shebang indent-guide importmagic ibuffer-projectile hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist geiser fuzzy forge font-lock+ flycheck-pos-tip flycheck-package flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish diff-hl deft define-word cython-mode counsel-projectile copy-as-format company-statistics company-shell company-quickhelp company-ansible company-anaconda column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-compile ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
  '(safe-local-variable-values
-   '((cider-shadow-default-options)
+   '((projectile-project-type quote clojure-cli)
+     (cider-shadow-default-options)
      (cider-default-cljs-repl)
      (cider-shadow-default-options . ":app")
      (cider-default-cljs-repl . shadow)
