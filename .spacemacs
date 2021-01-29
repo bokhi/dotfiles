@@ -732,6 +732,25 @@ you should place your code here."
                 (lambda (&rest r)
                   (advice-remove 'substring-no-properties #'identity))))#+end_src
 
+
+  (defun cider-pprint-register (arg register)
+    (interactive (if (equal current-prefix-arg nil)
+                      (list current-prefix-arg ?c)
+                    (list current-prefix-arg (register-read-with-preview "Eval register: "))))
+    (cider-load-buffer)
+    (cider--pprint-eval-form (get-register register)))
+
+
+  (defun cider-register-defun-at-point (arg register)
+    (interactive (if (equal current-prefix-arg nil)
+                      (list current-prefix-arg ?c)
+                    (list current-prefix-arg (register-read-with-preview "Copy to register: "))))
+    (set-register register (cider-defun-at-point)))
+
+
+  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "epr" 'cider-pprint-register)
+  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "of" 'cider-register-defun-at-point)
+
   (spacemacs/declare-prefix-for-mode 'python-mode "o" "custom")
   (spacemacs/set-leader-keys-for-major-mode 'python-mode "og" 'dumb-jump-go)
 
