@@ -40,7 +40,8 @@ This function should only modify configuration layer settings."
               clojure-enable-clj-refactor t
               clojure-enable-linters '(clj-kondo joker)
               ;; clojure-enable-sayid t)
-              clojure-enable-sayid nil)
+              clojure-enable-sayid nil
+              clojure-backend 'cider)
      sql
      emacs-lisp
      ;; graphviz
