@@ -34,6 +34,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-configuration-layers
    '(javascript
      ;; markdownhtml
+     helpful
      yaml
      (clojure :variables
               clojure-enable-fancify-symbols t
