@@ -730,7 +730,7 @@ you should place your code here."
     (advice-add 'cider-font-lock-as
                 :after
                 (lambda (&rest r)
-                  (advice-remove 'substring-no-properties #'identity))))#+end_src
+                  (advice-remove 'substring-no-properties #'identity))))
 
 
   (defun cider-pprint-register (arg register)
