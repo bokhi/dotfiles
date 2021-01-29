@@ -100,6 +100,7 @@ This function should only modify configuration layer settings."
      command-log
      ;; semantic
      gtags
+     prodigy
      )
 
    ;; List of additional packages that will be installed without being
@@ -847,6 +848,34 @@ If region is active open all links in region."
 
   ;; (setq evil-move-cursor-back nil
   ;;       evil-move-beyond-eol t)
+
+
+  ;; prodigy
+  ;; (setq prodigy-services '())
+                                        ; remove all service definitions
+  ;; (let ((cwd  (expand-file-name "~/gini/genrich/saas")))
+  ;;   (prodigy-define-service
+  ;;     :name "shared-datomic on gini-dev"
+  ;;     :command "direnv"
+  ;;     :args (list "exec" cwd "datomic" "-p" "gini-dev" "client" "access" "shared-datomic")
+  ;;     :cwd cwd
+  ;;     :tags '(datomic-client-proxy)
+  ;;     :stop-signal 'sigkill
+  ;;     :kill-process-buffer-on-stop t)
+  ;;   (prodigy-define-service
+  ;;     :name "gini-enrich-prod-datomic"
+  ;;     :command "direnv"
+  ;;     :args (list "exec" cwd "datomic"
+	;; 	              "client" "access" "gini-enrich-prod-datomic"
+	;; 	              "--profile" "gini-enrich-prod"
+	;; 	              "--port" "8183")
+  ;;     :cwd cwd
+  ;;     :tags '(datomic-client-proxy)
+  ;;     :stop-signal 'sigkill
+  ;;     :kill-process-buffer-on-stop t))
+
+
+
 
   )
 (defun dotspacemacs/emacs-custom-settings ()
