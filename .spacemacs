@@ -718,6 +718,20 @@ you should place your code here."
   ;; (add-hook 'clojure-mode-hook #'spacemacs/toggle-highlight-long-lines-on)
   (setq clojure-indent-style 'align-arguments)
 
+
+  ;; https://github.com/clojure-emacs/cider/issues/2901
+  (with-eval-after-load 'cider
+    (advice-add 'cider-ansi-color-string-p :override
+                (lambda (string) (string-match "\u001b[" string)))
+    (advice-add 'cider-font-lock-as
+                :before
+                (lambda (&rest r)
+                  (advice-add 'substring-no-properties :override #'identity)))
+    (advice-add 'cider-font-lock-as
+                :after
+                (lambda (&rest r)
+                  (advice-remove 'substring-no-properties #'identity))))#+end_src
+
   (spacemacs/declare-prefix-for-mode 'python-mode "o" "custom")
   (spacemacs/set-leader-keys-for-major-mode 'python-mode "og" 'dumb-jump-go)
 
