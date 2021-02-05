@@ -733,18 +733,18 @@ you should place your code here."
   (setq clojure-indent-style 'align-arguments)
 
 
-  ;; https://github.com/clojure-emacs/cider/issues/2901
-  (with-eval-after-load 'cider
-    (advice-add 'cider-ansi-color-string-p :override
-                (lambda (string) (string-match "\u001b[" string)))
-    (advice-add 'cider-font-lock-as
-                :before
-                (lambda (&rest r)
-                  (advice-add 'substring-no-properties :override #'identity)))
-    (advice-add 'cider-font-lock-as
-                :after
-                (lambda (&rest r)
-                  (advice-remove 'substring-no-properties #'identity))))
+  ;; ;; https://github.com/clojure-emacs/cider/issues/2901
+  ;; (with-eval-after-load 'cider
+  ;;   (advice-add 'cider-ansi-color-string-p :override
+  ;;               (lambda (string) (string-match "\u001b[" string)))
+  ;;   (advice-add 'cider-font-lock-as
+  ;;               :before
+  ;;               (lambda (&rest r)
+  ;;                 (advice-add 'substring-no-properties :override #'identity)))
+  ;;   (advice-add 'cider-font-lock-as
+  ;;               :after
+  ;;               (lambda (&rest r)
+  ;;                 (advice-remove 'substring-no-properties #'identity))))
 
 
   (defun cider-pprint-register (arg register)
