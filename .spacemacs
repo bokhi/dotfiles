@@ -34,7 +34,11 @@ This function should only modify configuration layer settings."
    dotspacemacs-configuration-layers
    '(html
      react
-     javascript
+     (javascript :variables
+                 javascript-repl 'nodejs
+                 js-indent-level 2
+                 js2-basic-offset 2
+                 node-add-modules-path t)
      ;; markdownhtml
      helpful
      yaml
@@ -128,6 +132,8 @@ This function should only modify configuration layer settings."
                                             (which-key :location (recipe :fetcher github
                                                                          :repo "justbur/emacs-which-key"))
                                             direnv
+                                            (nodejs-repl-eval :location (recipe :fetcher git
+                                                                                :url "https://gist.github.com/emallson/0eae865bc99fc9639fac.git"))
                                             foreman-mode
                                             ;; (helm-swoop :location (recipe :fetcher github
                                             ;;                               :repo "ashiklom/helm-swoop"))
@@ -569,6 +575,22 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
+
+  ;; javascript
+  ;; https://www.lengyueyang.com/en/post/tools/spacemacs/lengyueyang/#js-2-mode
+  (use-package nodejs-repl-eval
+    :commands (nodejs-repl-eval-buffer nodejs-repl-eval-dwim nodejs-repl-eval-function)
+    :init
+    (progn
+      (spacemacs/declare-prefix-for-mode 'js2-mode
+        "mo" "Nodejs-repl")
+      (spacemacs/set-leader-keys-for-major-mode 'js2-mode
+        "oo" 'nodejs-repl
+        "ob" 'nodejs-repl-eval-buffer
+        "of" 'nodejs-repl-eval-function
+        "od" 'nodejs-repl-eval-dwim))
+    :defer t)
 
   ;; slack
   (slack-register-team
