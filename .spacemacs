@@ -34,8 +34,10 @@ This function should only modify configuration layer settings."
    dotspacemacs-configuration-layers
    '(html
      react
+     solidity
      (javascript :variables
                  javascript-repl 'nodejs
+                 javascript-backend 'tern
                  js-indent-level 2
                  js2-basic-offset 2
                  node-add-modules-path t)
@@ -107,6 +109,7 @@ This function should only modify configuration layer settings."
      ;; semantic
      gtags
      prodigy
+     quickurl
      )
 
    ;; List of additional packages that will be installed without being
@@ -619,7 +622,7 @@ you should place your code here."
     :demand t
     :config
     (direnv-mode)
-    (setq direnv-always-show-summary nil)
+    (setq direnv-always-show-summary t)
     :hook
     ((prog-mode) . direnv-update-environment))
 
@@ -848,6 +851,8 @@ If region is active open all links in region."
       (fill-paragraph nil region)))
 
   (define-key global-map "\M-Q" 'unfill-paragraph)
+
+  ;; careful conflict with avy-dispatch-alist...
   (setq avy-keys '(?a ?r ?s ?t ?n ?e ?i ?o ))
 
   (defun evil-scroll-down-other-window ()
@@ -932,6 +937,71 @@ If region is active open all links in region."
   ;;     :stop-signal 'sigkill
   ;;     :kill-process-buffer-on-stop t))
 
+(with-eval-after-load 'ob-clojure
+  (defcustom org-babel-clojure-backend nil
+    "Backend used to evaluate Clojure code blocks."
+    :group 'org-babel
+    :type '(choice
+            (const :tag "inf-clojure" inf-clojure)
+            (const :tag "cider" cider)
+            (const :tag "bb" bb)))
+
+  (defun elisp->clj (in)
+    (cond
+     ((listp in) (concat "[" (s-join " " (mapcar #'elisp->clj in)) "]"))
+     (t (format "%s" in))))
+
+  ;; (defun ob-clojure-eval-with-babashka (expanded params)
+  ;;   "Evaluate EXPANDED code block with PARAMS using babashka."
+  ;;   (let ((exe (executable-find "bb")))
+  ;;     (unless exe (user-error "babashka CLI (bb) not found."))
+  ;;     (org-babel-execute:shell
+  ;;      (format "%s -e %S" exe expanded) params)))
+
+
+  (defun ob-clojure-eval-with-bb (expanded params)
+    "Evaluate EXPANDED code block with PARAMS using babashka."
+    (unless (executable-find "bb")
+      (user-error "Babashka not installed"))
+    (let* ((stdin (let ((stdin (cdr (assq :stdin params))))
+                    (when stdin
+                      (elisp->clj
+                       (org-babel-ref-resolve stdin)))))
+           (input (cdr (assq :input params)))
+           (file (make-temp-file "ob-clojure-bb" nil nil expanded))
+           (command (concat (when stdin (format "echo %s | " (shell-quote-argument stdin)))
+                            (format "bb %s -f %s"
+                                    (cond
+                                     ((equal input "edn") "")
+                                     ((equal input "text") "-i")
+                                     (t ""))
+                                    (shell-quote-argument file))))
+           (result (shell-command-to-string command)))
+      (s-trim result)))
+
+  (defun org-babel-execute:clojure (body params)
+    "Execute a block of Clojure code with Babel."
+    (unless org-babel-clojure-backend
+      (user-error "You need to customize org-babel-clojure-backend"))
+    (let* ((expanded (org-babel-expand-body:clojure body params))
+           (result-params (cdr (assq :result-params params)))
+           result)
+      (setq result
+            (cond
+             ((eq org-babel-clojure-backend 'inf-clojure)
+              (ob-clojure-eval-with-inf-clojure expanded params))
+             ((eq org-babel-clojure-backend 'cider)
+              (ob-clojure-eval-with-cider expanded params))
+             ((eq org-babel-clojure-backend 'bb)
+              (ob-clojure-eval-with-bb expanded params))))
+      (org-babel-result-cond result-params
+        result
+        (condition-case nil (org-babel-script-escape result)
+          (error result)))))
+
+  (customize-set-variable 'org-babel-clojure-backend 'bb))
+
+(add-hook 'org-mode-hook (lambda () (require 'ob-clojure)))
 
 
 
