@@ -51,7 +51,7 @@ This function should only modify configuration layer settings."
               ;; clojure-enable-sayid t)
               clojure-enable-sayid nil
               clojure-backend 'cider)
-     sql
+     ;; sql
      emacs-lisp
      ;; graphviz
      ;; (sql :variables
@@ -59,7 +59,6 @@ This function should only modify configuration layer settings."
      ;; scheme
      ;; common-lisp
      shell-scripts
-     shell
      deft
      (plantuml :variables
                plantuml-default-exec-mode 'executable)
@@ -75,7 +74,7 @@ This function should only modify configuration layer settings."
      github
      version-control
      (org :variables
-          org-enable-roam-support t)
+          org-enable-roam-support nil)
      syntax-checking
      (python :variables
              ;; python-sort-imports-on-save t
@@ -92,7 +91,7 @@ This function should only modify configuration layer settings."
              python-auto-set-local-pyvenv-virtualenv 'on-visit
              python-auto-set-local-pyenv-version 'on-visit
              )
-     ipython-notebook
+     ;; ipython-notebook
      search-engine
      (shell :variables
             shell-default-shell 'shell)
@@ -107,7 +106,7 @@ This function should only modify configuration layer settings."
      dash
      command-log
      ;; semantic
-     gtags
+     ;; gtags
      prodigy
      quickurl
      )
@@ -120,8 +119,9 @@ This function should only modify configuration layer settings."
    ;; '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    ;; dotspacemacs-additional-packages '(flycheck-pycheckers traad sicp evil-text-object-python)
-   dotspacemacs-additional-packages '(traad beacon
-                                            nov
+   dotspacemacs-additional-packages '(;; traad
+                                      ;; beacon
+                                            nov ; epub
                                             keyfreq
                                             evil-replace-with-register
                                             litable
@@ -692,6 +692,8 @@ you should place your code here."
              "* %? :NOTE:\n%U\n%a\n")
             ("s" "insights" item (file+headline org-default-notes-file "Insights")
              "%U %?")
+            ("l" "TIL" item (file+headline org-default-notes-file "Today I Learned")
+             "%U %?")
             ("e" "efficiency" checkitem (file+headline org-default-notes-file "Efficiency")
              "%U %?")
             ("j" "interruption" checkitem (file+headline org-default-notes-file "Interruptions")
@@ -748,8 +750,8 @@ you should place your code here."
   (spacemacs/set-leader-keys "oc" 'org-columns)
   (spacemacs/set-leader-keys "od" 'magit-file-dispatch)
   (setq magit-save-repository-buffers 'dontask)
-  (setq cider-save-file-on-load nil)
-  (setq clojure-align-forms-automatically nil)
+  (setq cider-save-file-on-load t)
+  (setq clojure-align-forms-automatically t) 
   ;; (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
   (spacemacs/toggle-highlight-long-lines-globally-on)
   ;; (add-hook 'clojure-mode-hook #'spacemacs/toggle-highlight-long-lines-on)
@@ -774,8 +776,8 @@ you should place your code here."
     (interactive (if (equal current-prefix-arg nil)
                       (list current-prefix-arg ?c)
                     (list current-prefix-arg (register-read-with-preview "Eval register: "))))
-    (cider-load-buffer)
-    (cider--pprint-eval-form (get-register register)))
+    (ignore-errors (cider-load-buffer))
+    (cider--pprint-eval-form (get-register register))) 
 
 
   (defun cider-register-defun-at-point (arg register)
@@ -786,7 +788,9 @@ you should place your code here."
 
 
   (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "epr" 'cider-pprint-register)
+  (spacemacs/set-leader-keys-for-major-mode 'clojurescript-mode "epr" 'cider-pprint-register)
   (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "of" 'cider-register-defun-at-point)
+  (spacemacs/set-leader-keys-for-major-mode 'clojurescript-mode "of" 'cider-register-defun-at-point)
 
 
   (spacemacs/declare-prefix-for-mode 'python-mode "o" "custom")
