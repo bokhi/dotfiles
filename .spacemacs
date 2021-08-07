@@ -44,6 +44,8 @@ This function should only modify configuration layer settings."
      ;; markdownhtml
      helpful
      yaml
+     (helm :variables
+           helm-follow-mode-persistent t)
      (clojure :variables
               clojure-enable-fancify-symbols t
               clojure-enable-clj-refactor t
