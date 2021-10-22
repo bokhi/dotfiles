@@ -799,7 +799,8 @@ you should place your code here."
   (spacemacs/toggle-highlight-long-lines-globally-on)
   ;; (add-hook 'clojure-mode-hook #'spacemacs/toggle-highlight-long-lines-on)
   (setq clojure-indent-style 'align-arguments)
-
+  (setq cider-format-code-options
+  '(("indents" (("ns" (("inner" 0) ("inner" 1)))))))
 
   ;; ;; https://github.com/clojure-emacs/cider/issues/2901
   ;; (with-eval-after-load 'cider
