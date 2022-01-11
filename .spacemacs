@@ -44,8 +44,9 @@ This function should only modify configuration layer settings."
      ;; markdownhtml
      helpful
      yaml
+     json
      (helm :variables
-           helm-follow-mode-persistent t)
+           helm-follow-mode-persistent nil)
      (clojure :variables
               clojure-enable-fancify-symbols t
               clojure-enable-clj-refactor t
@@ -138,6 +139,10 @@ This function should only modify configuration layer settings."
                                             direnv
                                             (nodejs-repl-eval :location (recipe :fetcher git
                                                                                 :url "https://gist.github.com/emallson/0eae865bc99fc9639fac.git"))
+                                            (cljstyle-mode :location (recipe :fetcher github
+                                                                             :repo "jstokes/cljstyle-mode"))
+                                            (kaocha-runner :location (recipe :fetcher github
+                                                                             :repo "magnars/kaocha-runner.el"))
                                             foreman-mode
                                             ;; (helm-swoop :location (recipe :fetcher github
                                             ;;                               :repo "ashiklom/helm-swoop"))
@@ -462,8 +467,8 @@ It should only modify the values of Spacemacs settings."
    ;; If set to `t', `relative' or `visual' then line numbers are enabled in all
    ;; `prog-mode' and `text-mode' derivatives. If set to `relative', line
    ;; numbers are relative. If set to `visual', line numbers are also relative,
-   ;; but lines are only visual lines are counted. For example, folded lines
-   ;; will not be counted and wrapped lines are counted as multiple lines.
+   ;; but only visual lines are counted. For example, folded lines will not be
+   ;; counted and wrapped lines are counted as multiple lines.
    ;; This variable can also be set to a property list for finer control:
    ;; '(:relative nil
    ;;   :visual nil
@@ -557,14 +562,14 @@ It should only modify the values of Spacemacs settings."
    ;; (default nil)
    dotspacemacs-whitespace-cleanup nil
 
-   ;; If non nil activate `clean-aindent-mode' which tries to correct
-   ;; virtual indentation of simple modes. This can interfer with mode specific
+   ;; If non-nil activate `clean-aindent-mode' which tries to correct
+   ;; virtual indentation of simple modes. This can interfere with mode specific
    ;; indent handling like has been reported for `go-mode'.
    ;; If it does deactivate it here.
    ;; (default t)
    dotspacemacs-use-clean-aindent-mode t
 
-   ;; Accept SPC as y for prompts if non nil. (default nil)
+   ;; Accept SPC as y for prompts if non-nil. (default nil)
    dotspacemacs-use-SPC-as-y nil
 
    ;; If non-nil shift your number row to match the entered keyboard layout
@@ -584,7 +589,7 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-pretty-docs nil
 
    ;; If nil the home buffer shows the full path of agenda items
-   ;; and todos. If non nil only the file name is shown.
+   ;; and todos. If non-nil only the file name is shown.
    dotspacemacs-home-shorten-agenda-source nil
 
    ;; If non-nil then byte-compile some of Spacemacs files.
@@ -622,7 +627,7 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
 
-
+  (global-so-long-mode 1)
 
   ;; ls does not work properly on mac, install coreutils to get gls
   (setq insert-directory-program (executable-find "gls"))
@@ -805,13 +810,16 @@ you should place your code here."
   (spacemacs/set-leader-keys "od" 'magit-file-dispatch)
   (setq magit-save-repository-buffers 'dontask)
   (setq cider-save-file-on-load t)
-  (setq clojure-align-forms-automatically t) 
+  (setq clojure-align-forms-automatically t)
   ;; (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+  ;; (add-hook 'clojure-mode-hook #'cljstyle-mode)
   (spacemacs/toggle-highlight-long-lines-globally-on)
   ;; (add-hook 'clojure-mode-hook #'spacemacs/toggle-highlight-long-lines-on)
   (setq clojure-indent-style 'align-arguments)
-  (setq cider-format-code-options
-  '(("indents" (("ns" (("inner" 0) ("inner" 1)))))))
+  ;; (setq cider-format-code-options
+  ;;       '(("indents" (("ns" (("inner" 0)))
+  ;;                     (":require" (("inner" 0)))))))
+
 
   ;; ;; https://github.com/clojure-emacs/cider/issues/2901
   ;; (with-eval-after-load 'cider
@@ -846,6 +854,15 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode 'clojurescript-mode "epr" 'cider-pprint-register)
   (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "of" 'cider-register-defun-at-point)
   (spacemacs/set-leader-keys-for-major-mode 'clojurescript-mode "of" 'cider-register-defun-at-point)
+
+  ;; kaocha
+  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tkt" 'kaocha-runner-run-test-at-point)
+  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tkr" 'kaocha-runner-run-tests)
+  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tka" 'kaocha-runner-run-all-tests)
+  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tkw" 'kaocha-runner-show-warnings)
+  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tkh" 'kaocha-runner-hide-windows)
+  (setq kaocha-runner-extra-configuration "{}")
+
 
 
   (spacemacs/declare-prefix-for-mode 'python-mode "o" "custom")
@@ -1075,6 +1092,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(cider-format-code-options '(("indents" (("ns" (("inner" 0)))))))
  '(evil-want-Y-yank-to-eol nil)
  '(evil-want-abbrev-expand-on-insert-exit nil)
  '(ispell-program-name "ispell")
@@ -1082,10 +1100,24 @@ This function is called at the very end of Spacemacs initialization."
  '(magit-diff-refine-hunk 'all)
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(package-selected-packages
-   '(flyspell-correct-helm flyspell-correct auto-dictionary nodejs-repl-eval slack circe oauth2 emojify emoji-cheat-sheet-plus company-emoji foreman-mode prodigy typing-game vterm treemacs-persp lsp-ui direnv company helm lsp-mode markdown-mode treemacs cfrs posframe ht projectile git-commit with-editor transient dash helm-core all-the-icons async org-plus-contrib helpful elisp-refs tide typescript-mode import-js grizzl counsel-gtags package-lint flycheck-elsa emr clang-format list-utils packed org-roam emacsql-sqlite3 selectric-mode lsp-treemacs cider anaconda-mode iedit magit pythonic bind-key rjsx-mode nodejs-repl livid-mode json-navigator hierarchy js2-refactor js-doc company-tern tern evil-adjust clojure-snippets cider-eval-sexp-fu queue parseedn clojure-mode parseclj a slime-company slime common-lisp-snippets csv-mode dap-mode bui tree-mode gnu-elpa-keyring-update web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode helm-css-scss haml-mode emmet-mode counsel-css counsel swiper ivy company-web web-completion-data add-node-modules-path ob-ipython dash-functional ein skewer-mode polymode js2-mode jupyter websocket simple-httpd zmq eros nov esxml stickyfunc-enhance srefactor beacon litable command-log-mode sql-indent keyfreq evil-replace-with-register annoying-arrows-mode evil-text-object-python flycheck-pycheckers yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil traad toc-org symon symbol-overlay string-inflection spaceline-all-the-icons smeargle sicp shell-pop restart-emacs rainbow-delimiters pytest pyenv-mode py-isort popwin pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless mwim multi-term move-text magit-svn magit-gitflow macrostep lorem-ipsum live-py-mode link-hint jinja2-mode insert-shebang indent-guide importmagic ibuffer-projectile hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist geiser fuzzy forge font-lock+ flycheck-pos-tip flycheck-package flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish diff-hl deft define-word cython-mode counsel-projectile copy-as-format company-statistics company-shell company-quickhelp company-ansible company-anaconda column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-compile ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
+   '(kaocha-runner cljstyle-mode flyspell-correct-helm flyspell-correct auto-dictionary nodejs-repl-eval slack circe oauth2 emojify emoji-cheat-sheet-plus company-emoji foreman-mode prodigy typing-game vterm treemacs-persp lsp-ui direnv company helm lsp-mode markdown-mode treemacs cfrs posframe ht projectile git-commit with-editor transient dash helm-core all-the-icons async org-plus-contrib helpful elisp-refs tide typescript-mode import-js grizzl counsel-gtags package-lint flycheck-elsa emr clang-format list-utils packed org-roam emacsql-sqlite3 selectric-mode lsp-treemacs cider anaconda-mode iedit magit pythonic bind-key rjsx-mode nodejs-repl livid-mode json-navigator hierarchy js2-refactor js-doc company-tern tern evil-adjust clojure-snippets cider-eval-sexp-fu queue parseedn clojure-mode parseclj a slime-company slime common-lisp-snippets csv-mode dap-mode bui tree-mode gnu-elpa-keyring-update web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode helm-css-scss haml-mode emmet-mode counsel-css counsel swiper ivy company-web web-completion-data add-node-modules-path ob-ipython dash-functional ein skewer-mode polymode js2-mode jupyter websocket simple-httpd zmq eros nov esxml stickyfunc-enhance srefactor beacon litable command-log-mode sql-indent keyfreq evil-replace-with-register annoying-arrows-mode evil-text-object-python flycheck-pycheckers yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil traad toc-org symon symbol-overlay string-inflection spaceline-all-the-icons smeargle sicp shell-pop restart-emacs rainbow-delimiters pytest pyenv-mode py-isort popwin pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless mwim multi-term move-text magit-svn magit-gitflow macrostep lorem-ipsum live-py-mode link-hint jinja2-mode insert-shebang indent-guide importmagic ibuffer-projectile hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist geiser fuzzy forge font-lock+ flycheck-pos-tip flycheck-package flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish diff-hl deft define-word cython-mode counsel-projectile copy-as-format company-statistics company-shell company-quickhelp company-ansible company-anaconda column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-compile ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
  '(python-shell-interpreter "python3")
  '(safe-local-variable-values
-   '((inf-clojure-custom-startup . "clojure -A:test:dev:aws:silent")
+   '((cider-known-endpoints
+      ("api2 :dev" "13.213.14.185" "3001")
+      ("api2 :uat" "3.114.16.64" "3001")
+      ("api2 :prod" "13.229.46.189" "3001"))
+     (cider-known-endpoints
+      ("api2 :dev" "13.212.110.192" "3001")
+      ("api2 :uat" "18.183.74.244" "3001")
+      ("api2 :prod" "13.251.129.95" "3001"))
+     (cider-known-endpoints
+      ("Replion local" "localhost" "3001")
+      ("Replion dev" "localhost" "3002")
+      ("api2 :dev" "13.212.110.192" "3001")
+      ("Replion uat" "localhost" "3003")
+      ("Replion prod" "localhost" "3004"))
+     (inf-clojure-custom-startup . "clojure -A:test:dev:aws:silent")
      (inf-clojure-custom-repl-type . clojure)
      (inf-clojure-custom-startup . "clojure -A:test:dev")
      (cider-known-endpoints
@@ -1095,6 +1127,8 @@ This function is called at the very end of Spacemacs initialization."
       ("Replion prod" "localhost" "3004"))
      (cider-known-endpoints
       ("replion" "localhost" "3001"))
+     (cider-test-defining-forms
+      ("deftest" "defspec" "defflow"))
      (cider-clojure-cli-global-options . -A:dev:test)
      (cider-clojure-cli-global-options . "-A:dev:test:datomic-peer:datomic-client:datomic-dev-local")
      (cider-clojure-cli-global-options . "-A:test:dev:tsv:aws:jwt:html:datomic-common:datomic-dev-local:ion-dev:ion-lab")
