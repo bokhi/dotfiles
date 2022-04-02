@@ -1118,29 +1118,14 @@ This function is called at the very end of Spacemacs initialization."
  '(python-shell-interpreter "python3")
  '(safe-local-variable-values
    '((cider-known-endpoints
-      ("api2 :dev" "13.213.14.185" "3001")
-      ("api2 :uat" "3.114.16.64" "3001")
-      ("api2 :prod" "13.229.46.189" "3001"))
-     (cider-known-endpoints
-      ("api2 :dev" "13.212.110.192" "3001")
-      ("api2 :uat" "18.183.74.244" "3001")
-      ("api2 :prod" "13.251.129.95" "3001"))
-     (cider-known-endpoints
-      ("Replion local" "localhost" "3001")
-      ("Replion dev" "localhost" "3002")
-      ("api2 :dev" "13.212.110.192" "3001")
-      ("Replion uat" "localhost" "3003")
-      ("Replion prod" "localhost" "3004"))
+      ("api2 :local" "127.0.0.1" "3001")
+      ("api2 :dev" "replion.gini-dev.co" "3001")
+      ("api2 :uat" "replion.gini-uat.co" "3001")
+      ("api2 :prod" "replion.predict.gini.co" "3001")
+      ("api2 :prod tunnelled" "127.0.0.1" "13001"))
      (inf-clojure-custom-startup . "clojure -A:test:dev:aws:silent")
      (inf-clojure-custom-repl-type . clojure)
      (inf-clojure-custom-startup . "clojure -A:test:dev")
-     (cider-known-endpoints
-      ("Replion local" "localhost" "3001")
-      ("Replion dev" "localhost" "3002")
-      ("Replion uat" "localhost" "3003")
-      ("Replion prod" "localhost" "3004"))
-     (cider-known-endpoints
-      ("replion" "localhost" "3001"))
      (cider-test-defining-forms
       ("deftest" "defspec" "defflow"))
      (cider-clojure-cli-global-options . -A:dev:test)
@@ -1164,7 +1149,8 @@ This function is called at the very end of Spacemacs initialization."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
+ '(highlight-parentheses-highlight ((nil (:weight ultra-bold))) t))
 )
 
 
