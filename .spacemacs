@@ -33,8 +33,8 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(html
-     react
-     solidity
+     ;; react
+     ;; solidity
      (javascript :variables
                  javascript-repl 'nodejs
                  javascript-backend 'tern
@@ -53,6 +53,7 @@ This function should only modify configuration layer settings."
               clojure-enable-linters '(clj-kondo joker)
               ;; clojure-enable-sayid t)
               clojure-enable-sayid nil
+              clojure-enable-kaocha-runner t
               clojure-backend 'cider)
      ;; sql
      emacs-lisp
@@ -92,8 +93,7 @@ This function should only modify configuration layer settings."
              ;; python-auto-set-local-pyvenv-virtualenv 'on-project-switch
              ;; python-auto-set-local-pyenv-version 'on-project-switch
              python-auto-set-local-pyvenv-virtualenv 'on-visit
-             python-auto-set-local-pyenv-version 'on-visit
-             )
+             python-auto-set-local-pyenv-version 'on-visit)
      ;; ipython-notebook
      search-engine
      (shell :variables
@@ -103,8 +103,9 @@ This function should only modify configuration layer settings."
      ;; multiple-cursors
      ;; (keyboard-layout :variables kl-layout 'colemak-neio)
      ;; slack
-     ;; (spell-checking :variables
-     ;;                 spell-checking-enable-auto-dictionary t)
+     (spell-checking :variables
+                     spell-checking-enable-auto-dictionary t
+                     enable-flyspell-auto-completion nil)
      ;; gnus
      dash
      command-log
@@ -136,7 +137,7 @@ This function should only modify configuration layer settings."
                                             jupyter
                                             (which-key :location (recipe :fetcher github
                                                                          :repo "justbur/emacs-which-key"))
-                                            direnv
+                                            envrc
                                             (nodejs-repl-eval :location (recipe :fetcher git
                                                                                 :url "https://gist.github.com/emallson/0eae865bc99fc9639fac.git"))
                                             (cljstyle-mode :location (recipe :fetcher github
@@ -676,15 +677,9 @@ you should place your code here."
       (define-key evil-normal-state-map "gt" nil)
       (define-key evil-normal-state-map "gT" nil)))
 
-  ;; https://gitter.im/syl20bnr/spacemacs?at=5cf2b08dff3f016baa89e15e
-  (use-package direnv
-    :demand t
+  (use-package envrc
     :config
-    (direnv-mode)
-    (setq direnv-always-show-summary t)
-    :hook
-    ((prog-mode) . direnv-update-environment))
-
+    (envrc-global-mode))
 
   (defun disable-sp-hippie-advice (&rest _)
     (setq smartparens-mode-original-value smartparens-mode)
@@ -862,6 +857,15 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tkw" 'kaocha-runner-show-warnings)
   (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tkh" 'kaocha-runner-hide-windows)
   (setq kaocha-runner-extra-configuration "{}")
+
+  ;; https://docs.cider.mx/cider/usage/misc_features.html#reloading-code
+  ;; cider-ns-save-files-on-refresh and cider-ns-save-files-on-refresh-modes.
+
+  (setq cider-invert-insert-eval-p t)
+
+  (setq cider-print-fn 'fipp)
+  (setq cider-repl-buffer-size-limit 1048576)
+  (setq cider-eval-result-duration 'change)
 
 
 
