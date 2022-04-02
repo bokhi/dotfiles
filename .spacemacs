@@ -33,15 +33,12 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(html
-     ;; react
-     ;; solidity
      (javascript :variables
                  javascript-repl 'nodejs
                  javascript-backend 'tern
                  js-indent-level 2
                  js2-basic-offset 2
                  node-add-modules-path t)
-     ;; markdownhtml
      helpful
      yaml
      json
@@ -55,14 +52,11 @@ This function should only modify configuration layer settings."
               clojure-enable-sayid nil
               clojure-enable-kaocha-runner t
               clojure-backend 'cider)
-     ;; sql
      emacs-lisp
-     ;; graphviz
      ;; (sql :variables
      ;;      sql-capitalize-keywords t)
      (scheme :variables
              scheme-implementations '(mit))
-     ;; common-lisp
      shell-scripts
      deft
      (plantuml :variables
@@ -74,7 +68,6 @@ This function should only modify configuration layer settings."
                       auto-completion-enable-snippets-in-popup t)
      better-defaults
      ibuffer
-     ;; lsp
      git
      version-control
      (org :variables
@@ -94,26 +87,31 @@ This function should only modify configuration layer settings."
              ;; python-auto-set-local-pyenv-version 'on-project-switch
              python-auto-set-local-pyvenv-virtualenv 'on-visit
              python-auto-set-local-pyenv-version 'on-visit)
-     ;; ipython-notebook
      search-engine
      (shell :variables
             shell-default-shell 'shell)
      copy-as-format
      xclipboard
-     ;; multiple-cursors
      ;; (keyboard-layout :variables kl-layout 'colemak-neio)
-     ;; slack
      (spell-checking :variables
                      spell-checking-enable-auto-dictionary t
                      enable-flyspell-auto-completion nil)
-     ;; gnus
      dash
      command-log
-     ;; semantic
-     ;; gtags
      prodigy
      quickurl
      prettier
+
+     ;; to try
+     ;; templates
+     ;; outshine
+     ;; smex
+     ;; unicode-fonts
+     ;; osx
+     ;; languagetool
+     ;; evil-better-jumper
+
+
      )
 
    ;; List of additional packages that will be installed without being
