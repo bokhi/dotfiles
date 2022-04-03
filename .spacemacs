@@ -102,12 +102,13 @@ This function should only modify configuration layer settings."
      quickurl
      prettier
 
+     osx
+
      ;; to try
      ;; templates
      ;; outshine
      ;; smex
      ;; unicode-fonts
-     ;; osx
      ;; languagetool
      ;; evil-better-jumper
 
@@ -633,10 +634,6 @@ you should place your code here."
   (setq native-comp-async-report-warnings-errors nil)
 
   (global-so-long-mode 1)
-
-  ;; ls does not work properly on mac, install coreutils to get gls
-  (if (eq system-type 'darwin)
-      (setq insert-directory-program (executable-find "gls")))
 
   ;; shell
   (setq terminal-here-mac-terminal-command 'iterm2)
