@@ -102,7 +102,15 @@ This function should only modify configuration layer settings."
      quickurl
      prettier
 
-     osx
+     (osx :variables
+          osx-command-as       'super
+          osx-option-as        'meta
+          osx-control-as       'control
+          osx-function-as      nil
+          osx-right-command-as 'left
+          osx-right-option-as  'left
+          osx-right-control-as 'left
+          osx-swap-option-and-command nil)
 
      ;; to try
      ;; templates
@@ -670,18 +678,7 @@ you should place your code here."
     :evil-leader "tP")
 
   ;; https://github.com/joaotavora/yasnippet/issues/785#issuecomment-285437447
-  (defvar smartparens-mode-original-value)
-
-  ;; https://github.com/syl20bnr/spacemacs/issues/13677#issuecomment-673204519
-  (with-eval-after-load 'evil-maps
-    (when (featurep 'tab-bar)
-      (define-key evil-normal-state-map "gt" nil)
-      (define-key evil-normal-state-map "gT" nil)))
-
-  (use-package envrc
-    :config
-    (envrc-global-mode))
-
+  ;; (defvar smartparens-mode-original-value)
   ;; (defun disable-sp-hippie-advice (&rest _)
   ;;   (setq smartparens-mode-original-value smartparens-mode)
   ;;   (setq smartparens-mode nil)
@@ -698,6 +695,17 @@ you should place your code here."
   ;;             ;; Set negative depth to make sure we go after
   ;;             ;; `sp-auto-complete-advice'.
   ;;             '((depth . -100)))
+
+  ;; https://github.com/syl20bnr/spacemacs/issues/13677#issuecomment-673204519
+  (with-eval-after-load 'evil-maps
+    (when (featurep 'tab-bar)
+      (define-key evil-normal-state-map "gt" nil)
+      (define-key evil-normal-state-map "gT" nil)))
+
+  (use-package envrc
+    :config
+    (envrc-global-mode))
+
 
 
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
@@ -789,6 +797,7 @@ you should place your code here."
 
   (spacemacs/declare-prefix "o" "custom")
   (spacemacs/set-leader-keys "oc" 'org-columns)
+  (spacemacs/set-leader-keys "og" 'engine/search-google)
   (spacemacs/set-leader-keys "od" 'magit-file-dispatch)
 
   (setq magit-save-repository-buffers 'dontask)
