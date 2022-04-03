@@ -133,18 +133,12 @@ This function should only modify configuration layer settings."
                                             eros
                                             chronometer
                                             jupyter
-                                            (which-key :location (recipe :fetcher github
-                                                                         :repo "justbur/emacs-which-key"))
                                             envrc
                                             (nodejs-repl-eval :location (recipe :fetcher git
                                                                                 :url "https://gist.github.com/emallson/0eae865bc99fc9639fac.git"))
                                             (cljstyle-mode :location (recipe :fetcher github
                                                                              :repo "jstokes/cljstyle-mode"))
-                                            (kaocha-runner :location (recipe :fetcher github
-                                                                             :repo "magnars/kaocha-runner.el"))
                                             foreman-mode
-                                            ;; (helm-swoop :location (recipe :fetcher github
-                                            ;;                               :repo "ashiklom/helm-swoop"))
 )
 
    ;; A list of packages that cannot be updated.
@@ -691,29 +685,27 @@ you should place your code here."
     :config
     (envrc-global-mode))
 
-  (defun disable-sp-hippie-advice (&rest _)
-    (setq smartparens-mode-original-value smartparens-mode)
-    (setq smartparens-mode nil)
-    t) ; We should still return t.
-  ;; This advice could be added to other functions that usually insert
-  ;; balanced parens, like `try-expand-list'.
-  (advice-add 'yas-hippie-try-expand :after-while #'disable-sp-hippie-advice)
+  ;; (defun disable-sp-hippie-advice (&rest _)
+  ;;   (setq smartparens-mode-original-value smartparens-mode)
+  ;;   (setq smartparens-mode nil)
+  ;;   t) ; We should still return t.
+  ;; ;; This advice could be added to other functions that usually insert
+  ;; ;; balanced parens, like `try-expand-list'.
+  ;; (advice-add 'yas-hippie-try-expand :after-while #'disable-sp-hippie-advice)
 
-  (defun reenable-sp-hippie-advice (&rest _)
-    (when (boundp 'smartparens-mode-original-value)
-      (setq smartparens-mode smartparens-mode-original-value)
-      (makunbound 'smartparens-mode-original-value)))
-  (advice-add 'hippie-expand :after #'reenable-sp-hippie-advice
-              ;; Set negative depth to make sure we go after
-              ;; `sp-auto-complete-advice'.
-              '((depth . -100)))
+  ;; (defun reenable-sp-hippie-advice (&rest _)
+  ;;   (when (boundp 'smartparens-mode-original-value)
+  ;;     (setq smartparens-mode smartparens-mode-original-value)
+  ;;     (makunbound 'smartparens-mode-original-value)))
+  ;; (advice-add 'hippie-expand :after #'reenable-sp-hippie-advice
+  ;;             ;; Set negative depth to make sure we go after
+  ;;             ;; `sp-auto-complete-advice'.
+  ;;             '((depth . -100)))
 
 
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
   (add-hook 'term-mode-hook 'toggle-truncate-lines)
-  ;; (with-eval-after-load 'flycheck
-  ;;   (add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
 
   ;; from https://stackoverflow.com/a/29757750
   (defun ediff-copy-both-to-C ()
@@ -726,16 +718,6 @@ you should place your code here."
   (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
 
 
-  ;; ;; https://emacs.stackexchange.com/a/40763
-  ;; ;; magit-popup is obsolete, magit now use magit transient
-  ;; (with-eval-after-load 'magit-commit
-  ;;   (magit-define-popup-option 'magit-rebase-popup
-  ;;     ?x "Exec command" "--exec=" #'read-shell-command))
-
-  ;; orgmode babel clojure support
-
-
-  ;; (require 'ob-ipython)
   (with-eval-after-load 'org
     (setq org-directory "~/Dropbox/notes/"
           org-clock-out-remove-zero-time-clocks t
@@ -808,23 +790,23 @@ you should place your code here."
      (clojure . t)
      ))
 
-  (setq clojure-toplevel-inside-comment-form t)
-  (setq cljr-warn-on-eval nil)
   (spacemacs/declare-prefix "o" "custom")
   (spacemacs/set-leader-keys "oc" 'org-columns)
   (spacemacs/set-leader-keys "od" 'magit-file-dispatch)
+
   (setq magit-save-repository-buffers 'dontask)
+  (spacemacs/toggle-highlight-long-lines-globally-on)
+
+  (setq clojure-toplevel-inside-comment-form t)
+  (setq cljr-warn-on-eval nil)
   (setq cider-save-file-on-load t)
   (setq clojure-align-forms-automatically t)
   ;; (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
   ;; (add-hook 'clojure-mode-hook #'cljstyle-mode)
-  (spacemacs/toggle-highlight-long-lines-globally-on)
-  ;; (add-hook 'clojure-mode-hook #'spacemacs/toggle-highlight-long-lines-on)
   (setq clojure-indent-style 'align-arguments)
   ;; (setq cider-format-code-options
   ;;       '(("indents" (("ns" (("inner" 0)))
   ;;                     (":require" (("inner" 0)))))))
-
 
   ;; ;; https://github.com/clojure-emacs/cider/issues/2901
   ;; (with-eval-after-load 'cider
@@ -860,12 +842,6 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "of" 'cider-register-defun-at-point)
   (spacemacs/set-leader-keys-for-major-mode 'clojurescript-mode "of" 'cider-register-defun-at-point)
 
-  ;; kaocha
-  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tkt" 'kaocha-runner-run-test-at-point)
-  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tkr" 'kaocha-runner-run-tests)
-  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tka" 'kaocha-runner-run-all-tests)
-  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tkw" 'kaocha-runner-show-warnings)
-  (spacemacs/set-leader-keys-for-major-mode 'clojure-mode "tkh" 'kaocha-runner-hide-windows)
   (setq kaocha-runner-extra-configuration "{}")
 
   ;; https://docs.cider.mx/cider/usage/misc_features.html#reloading-code
@@ -876,8 +852,6 @@ you should place your code here."
   (setq cider-print-fn 'fipp)
   (setq cider-repl-buffer-size-limit 1048576)
   (setq cider-eval-result-duration 'change)
-
-
 
   (spacemacs/declare-prefix-for-mode 'python-mode "o" "custom")
   (spacemacs/set-leader-keys-for-major-mode 'python-mode "og" 'dumb-jump-go)
@@ -993,6 +967,7 @@ If region is active open all links in region."
   ;;   ;; (ispell-hunspell-add-multi-dic "pl_PL,en_GB")
   ;;   ;; (setq ispell-dictionary "francais,en_GB"))
   ;;   (setq ispell-dictionary "en_GB"))
+
   (custom-set-faces
    '(company-tooltip-common
      ((t (:inherit company-tooltip :weight bold :underline nil))))
@@ -1001,7 +976,6 @@ If region is active open all links in region."
 
   ;; (setq evil-move-cursor-back nil
   ;;       evil-move-beyond-eol t)
-
 
   ;; prodigy
   ;; (setq prodigy-services '())
@@ -1027,73 +1001,71 @@ If region is active open all links in region."
   ;;     :stop-signal 'sigkill
   ;;     :kill-process-buffer-on-stop t))
 
-(with-eval-after-load 'ob-clojure
-  (defcustom org-babel-clojure-backend nil
-    "Backend used to evaluate Clojure code blocks."
-    :group 'org-babel
-    :type '(choice
-            (const :tag "inf-clojure" inf-clojure)
-            (const :tag "cider" cider)
-            (const :tag "bb" bb)))
+  (with-eval-after-load 'ob-clojure
+    (defcustom org-babel-clojure-backend nil
+      "Backend used to evaluate Clojure code blocks."
+      :group 'org-babel
+      :type '(choice
+              (const :tag "inf-clojure" inf-clojure)
+              (const :tag "cider" cider)
+              (const :tag "bb" bb)))
 
-  (defun elisp->clj (in)
-    (cond
-     ((listp in) (concat "[" (s-join " " (mapcar #'elisp->clj in)) "]"))
-     (t (format "%s" in))))
+    (defun elisp->clj (in)
+      (cond
+       ((listp in) (concat "[" (s-join " " (mapcar #'elisp->clj in)) "]"))
+       (t (format "%s" in))))
 
-  ;; (defun ob-clojure-eval-with-babashka (expanded params)
-  ;;   "Evaluate EXPANDED code block with PARAMS using babashka."
-  ;;   (let ((exe (executable-find "bb")))
-  ;;     (unless exe (user-error "babashka CLI (bb) not found."))
-  ;;     (org-babel-execute:shell
-  ;;      (format "%s -e %S" exe expanded) params)))
-
-
-  (defun ob-clojure-eval-with-bb (expanded params)
-    "Evaluate EXPANDED code block with PARAMS using babashka."
-    (unless (executable-find "bb")
-      (user-error "Babashka not installed"))
-    (let* ((stdin (let ((stdin (cdr (assq :stdin params))))
-                    (when stdin
-                      (elisp->clj
-                       (org-babel-ref-resolve stdin)))))
-           (input (cdr (assq :input params)))
-           (file (make-temp-file "ob-clojure-bb" nil nil expanded))
-           (command (concat (when stdin (format "echo %s | " (shell-quote-argument stdin)))
-                            (format "bb %s -f %s"
-                                    (cond
-                                     ((equal input "edn") "")
-                                     ((equal input "text") "-i")
-                                     (t ""))
-                                    (shell-quote-argument file))))
-           (result (shell-command-to-string command)))
-      (s-trim result)))
-
-  (defun org-babel-execute:clojure (body params)
-    "Execute a block of Clojure code with Babel."
-    (unless org-babel-clojure-backend
-      (user-error "You need to customize org-babel-clojure-backend"))
-    (let* ((expanded (org-babel-expand-body:clojure body params))
-           (result-params (cdr (assq :result-params params)))
-           result)
-      (setq result
-            (cond
-             ((eq org-babel-clojure-backend 'inf-clojure)
-              (ob-clojure-eval-with-inf-clojure expanded params))
-             ((eq org-babel-clojure-backend 'cider)
-              (ob-clojure-eval-with-cider expanded params))
-             ((eq org-babel-clojure-backend 'bb)
-              (ob-clojure-eval-with-bb expanded params))))
-      (org-babel-result-cond result-params
-        result
-        (condition-case nil (org-babel-script-escape result)
-          (error result)))))
-
-  (customize-set-variable 'org-babel-clojure-backend 'bb))
-
-(add-hook 'org-mode-hook (lambda () (require 'ob-clojure)))
+    ;; (defun ob-clojure-eval-with-babashka (expanded params)
+    ;;   "Evaluate EXPANDED code block with PARAMS using babashka."
+    ;;   (let ((exe (executable-find "bb")))
+    ;;     (unless exe (user-error "babashka CLI (bb) not found."))
+    ;;     (org-babel-execute:shell
+    ;;      (format "%s -e %S" exe expanded) params)))
 
 
+    (defun ob-clojure-eval-with-bb (expanded params)
+      "Evaluate EXPANDED code block with PARAMS using babashka."
+      (unless (executable-find "bb")
+        (user-error "Babashka not installed"))
+      (let* ((stdin (let ((stdin (cdr (assq :stdin params))))
+                      (when stdin
+                        (elisp->clj
+                         (org-babel-ref-resolve stdin)))))
+             (input (cdr (assq :input params)))
+             (file (make-temp-file "ob-clojure-bb" nil nil expanded))
+             (command (concat (when stdin (format "echo %s | " (shell-quote-argument stdin)))
+                              (format "bb %s -f %s"
+                                      (cond
+                                       ((equal input "edn") "")
+                                       ((equal input "text") "-i")
+                                       (t ""))
+                                      (shell-quote-argument file))))
+             (result (shell-command-to-string command)))
+        (s-trim result)))
+
+    (defun org-babel-execute:clojure (body params)
+      "Execute a block of Clojure code with Babel."
+      (unless org-babel-clojure-backend
+        (user-error "You need to customize org-babel-clojure-backend"))
+      (let* ((expanded (org-babel-expand-body:clojure body params))
+             (result-params (cdr (assq :result-params params)))
+             result)
+        (setq result
+              (cond
+               ((eq org-babel-clojure-backend 'inf-clojure)
+                (ob-clojure-eval-with-inf-clojure expanded params))
+               ((eq org-babel-clojure-backend 'cider)
+                (ob-clojure-eval-with-cider expanded params))
+               ((eq org-babel-clojure-backend 'bb)
+                (ob-clojure-eval-with-bb expanded params))))
+        (org-babel-result-cond result-params
+          result
+          (condition-case nil (org-babel-script-escape result)
+            (error result)))))
+
+    (customize-set-variable 'org-babel-clojure-backend 'bb))
+
+  (add-hook 'org-mode-hook (lambda () (require 'ob-clojure)))
 
   )
 (defun dotspacemacs/emacs-custom-settings ()
