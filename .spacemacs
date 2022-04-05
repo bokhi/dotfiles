@@ -48,7 +48,6 @@ This function should only modify configuration layer settings."
               clojure-enable-fancify-symbols t
               clojure-enable-clj-refactor t
               clojure-enable-linters '(clj-kondo joker)
-              ;; clojure-enable-sayid t)
               clojure-enable-sayid nil
               clojure-enable-kaocha-runner t
               clojure-backend 'cider)
@@ -800,7 +799,9 @@ you should place your code here."
   (setq magit-save-repository-buffers 'dontask)
   (spacemacs/toggle-highlight-long-lines-globally-on)
 
+  ;; breaks lsp, see https://github.com/emacs-lsp/lsp-mode/issues/2698
   (setq clojure-toplevel-inside-comment-form t)
+
   (setq cljr-warn-on-eval nil)
   (setq cider-save-file-on-load t)
   (setq clojure-align-forms-automatically t)
@@ -854,7 +855,15 @@ you should place your code here."
 
   (setq cider-print-fn 'fipp)
   (setq cider-repl-buffer-size-limit 1048576)
-  (setq cider-eval-result-duration 'change)
+  (setq cider-eval-result-duration 'command)
+
+  (setq cljr-warn-on-eval nil)
+  (setq cljr-suppress-middleware-warnings t)
+  (setq cljr-favor-prefix-notation nil)
+  (setq cljr-favor-private-functions nil)
+  (setq cljr-inject-dependencies-at-jack-in t)
+  (setq cljr-eagerly-build-asts-on-startup nil)
+  (setq cljr-ignore-analyzer-errors t)
 
   (spacemacs/declare-prefix-for-mode 'python-mode "o" "custom")
   (spacemacs/set-leader-keys-for-major-mode 'python-mode "og" 'dumb-jump-go)
