@@ -66,9 +66,8 @@ This function should only modify configuration layer settings."
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-sort-by-usage t
                       auto-completion-enable-snippets-in-popup t)
-     better-defaults
      ibuffer
-     git
+     (git :variables git-enable-magit-todos-plugin t)
      version-control
      (org :variables
           org-enable-roam-support nil)
@@ -100,8 +99,6 @@ This function should only modify configuration layer settings."
      command-log
      prodigy
      quickurl
-     prettier
-
      (osx :variables
           osx-command-as       'super
           osx-option-as        'meta
