@@ -780,7 +780,19 @@ you should place your code here."
 
 
   (setq deft-directory "~/Dropbox/notes")
+
+  ;; Roam
   (setq org-roam-directory (file-truename "~/Dropbox/notes/roam"))
+  (setq org-roam-node-display-template "${title} ${tags}")
+  (defun my/preview-fetcher ()
+    (let* ((elem (org-element-context))
+           (parent (org-element-property :parent elem)))
+      ;; TODO: alt handling for non-paragraph elements
+      (string-trim-right (buffer-substring-no-properties
+                          (org-element-property :begin parent)
+                          (org-element-property :end parent)))))
+  (setq org-roam-preview-function #'my/preview-fetcher)
+
   (setq paradox-github-token "bdd4e1a50ae0808c5a7ebd56c3ef3b33a3d70b69")
   (org-babel-do-load-languages
    'org-babel-load-languages
