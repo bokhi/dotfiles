@@ -69,7 +69,8 @@ This function should only modify configuration layer settings."
      (git :variables git-enable-magit-todos-plugin t)
      version-control
      (org :variables
-          org-enable-roam-support nil)
+          org-enable-roam-support t
+          org-enable-transclusion-support t)
      syntax-checking
      (python :variables
              ;; python-sort-imports-on-save t
@@ -779,6 +780,7 @@ you should place your code here."
 
 
   (setq deft-directory "~/Dropbox/notes")
+  (setq org-roam-directory (file-truename "~/Dropbox/notes/roam"))
   (setq paradox-github-token "bdd4e1a50ae0808c5a7ebd56c3ef3b33a3d70b69")
   (org-babel-do-load-languages
    'org-babel-load-languages
