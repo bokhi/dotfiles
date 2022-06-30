@@ -45,7 +45,7 @@ This function should only modify configuration layer settings."
      (helm :variables
            helm-follow-mode-persistent nil)
      (clojure :variables
-              clojure-enable-fancify-symbols t
+              clojure-enable-fancify-symbols nil
               clojure-enable-clj-refactor t
               clojure-enable-linters '(clj-kondo joker)
               clojure-enable-sayid nil
@@ -140,6 +140,7 @@ This function should only modify configuration layer settings."
                                             chronometer
                                             jupyter
                                             envrc
+                                            sql-presto
                                             (nodejs-repl-eval :location (recipe :fetcher git
                                                                                 :url "https://gist.github.com/emallson/0eae865bc99fc9639fac.git"))
                                             (cljstyle-mode :location (recipe :fetcher github
@@ -643,6 +644,7 @@ you should place your code here."
   ;; shell
   (setq terminal-here-mac-terminal-command 'iterm2)
 
+  (setq git-link-use-commit t)
 
   ;; javascript
   ;; https://www.lengyueyang.com/en/post/tools/spacemacs/lengyueyang/#js-2-mode
@@ -959,6 +961,11 @@ If region is active open all links in region."
   (define-key evil-normal-state-map
     (kbd "C-S-u") 'evil-scroll-up-other-window)
 
+  ;; presto
+
+  (setq sql-presto-program "~/gini/ginoco/datomic-analytics/presto")
+  (setq sql-presto-options '("--catalog" "ginoco" "--schema" "xero-replica" "--output-format" "CSV_HEADER"))
+  (setenv "PRESTO_PAGER" "head -n 1000")
 
 
   (with-eval-after-load 'scroll-all
@@ -1105,6 +1112,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cider-format-code-options '(("indents" (("ns" (("inner" 0)))))))
+ '(cider-print-fn 'puget)
  '(evil-want-Y-yank-to-eol nil)
  '(evil-want-abbrev-expand-on-insert-exit nil)
  '(ispell-program-name "ispell")
