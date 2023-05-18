@@ -146,6 +146,7 @@ This function should only modify configuration layer settings."
                                             (cljstyle-mode :location (recipe :fetcher github
                                                                              :repo "jstokes/cljstyle-mode"))
                                             foreman-mode
+                                            gptel
 )
 
    ;; A list of packages that cannot be updated.
@@ -638,6 +639,8 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (setq native-comp-async-report-warnings-errors nil)
+
+  (require 'gptel)
 
   (global-so-long-mode 1)
 
