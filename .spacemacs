@@ -145,6 +145,10 @@ This function should only modify configuration layer settings."
                                                                                 :url "https://gist.github.com/emallson/0eae865bc99fc9639fac.git"))
                                             (cljstyle-mode :location (recipe :fetcher github
                                                                              :repo "jstokes/cljstyle-mode"))
+                                            (copilot :location (recipe
+                                                                :fetcher github
+                                                                :repo "zerolfx/copilot.el"
+                                                                :files ("*.el" "dist")))
                                             foreman-mode
                                             fcitx
                                             gptel
@@ -669,6 +673,20 @@ you should place your code here."
 
   (setq git-link-use-commit t)
 
+  ;; accept completion from copilot and fallback to company
+  (with-eval-after-load 'company
+    ;; disable inline previews
+    (delq 'company-preview-if-just-one-frontend company-frontends))
+  (with-eval-after-load 'copilot
+    (define-key copilot-completion-map (kbd "C-g") 'copilot-clear-overlay)
+    (define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion)
+    (define-key copilot-completion-map (kbd "M-n") 'copilot-next-completion)
+    (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+    (define-key copilot-completion-map (kbd "M-f") 'copilot-accept-completion-by-word)
+    (define-key copilot-completion-map (kbd "M-l") 'copilot-accept-completion-by-line)
+    )
+
+  (add-hook 'prog-mode-hook 'copilot-mode)
   ;; javascript
   ;; https://www.lengyueyang.com/en/post/tools/spacemacs/lengyueyang/#js-2-mode
   (use-package nodejs-repl-eval
