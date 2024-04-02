@@ -32,41 +32,49 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(html
+   '(typescript
+     nixos
+     ;; rust
+     sql
+     html
      (javascript :variables
                  javascript-repl 'nodejs
-                 javascript-backend 'tern
+                 ;; javascript-backend 'tern
+                 javascript-backend 'lsp
                  js-indent-level 2
                  js2-basic-offset 2
+                 javascript-fmt-tool 'prettier
+                 javascript-fmt-on-save t
                  node-add-modules-path t)
+     prettier
      helpful
      yaml
      json
-     (helm :variables
-           helm-follow-mode-persistent nil)
-     (clojure :variables
-              clojure-enable-fancify-symbols nil
-              clojure-enable-clj-refactor t
-              clojure-enable-linters '(clj-kondo joker)
-              clojure-enable-sayid nil
-              clojure-enable-kaocha-runner t
-              clojure-backend 'cider)
-     emacs-lisp
+     ;; (helm :variables
+     ;;       helm-follow-mode-persistent nil)
+     ;; (clojure :variables
+     ;;          clojure-enable-fancify-symbols nil
+     ;;          clojure-enable-clj-refactor t
+     ;;          clojure-enable-linters '(clj-kondo joker)
+     ;;          clojure-enable-sayid nil
+     ;;          clojure-enable-kaocha-runner t
+     ;;          clojure-backend 'cider)
+     ;; emacs-lisp
      ;; (sql :variables
      ;;      sql-capitalize-keywords t)
-     (scheme :variables
-             scheme-implementations '(mit))
+     ;; (scheme :variables
+     ;;         scheme-implementations '(mit))
      shell-scripts
      deft
-     (plantuml :variables
-               plantuml-default-exec-mode 'executable)
+     ;; (plantuml :variables
+     ;;           plantuml-default-exec-mode 'executable)
      imenu-list
      (auto-completion :variables
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-sort-by-usage t
                       auto-completion-enable-snippets-in-popup t)
      ibuffer
-     (git :variables git-enable-magit-todos-plugin t)
+     (git :variables git-enable-magit-todos-plugin nil)
      version-control
      (org :variables
           org-enable-roam-support t
@@ -75,17 +83,19 @@ This function should only modify configuration layer settings."
      (python :variables
              ;; python-sort-imports-on-save t
              ;; python-sort-imports-on-save nil
-             python-backend 'lsp
+             ;; python-backend 'lsp
+             ;; python-lsp-server 'pyright
              python-formatter 'black
-             ;; python-format-on-save t
+             python-format-on-save t
              ;; python-format-on-save nil
              ;; python-pipenv-activate t
-             ;; python-backend 'anaconda
+             python-backend 'anaconda
              python-test-runner 'pytest
              ;; python-auto-set-local-pyvenv-virtualenv 'on-project-switch
              ;; python-auto-set-local-pyenv-version 'on-project-switch
              python-auto-set-local-pyvenv-virtualenv 'on-visit
-             python-auto-set-local-pyenv-version 'on-visit)
+             )
+     ipython-notebook
      search-engine
      (shell :variables
             shell-default-shell 'shell)
@@ -108,6 +118,7 @@ This function should only modify configuration layer settings."
           osx-right-option-as  'left
           osx-right-control-as 'left
           osx-swap-option-and-command nil)
+     github-copilot
 
      ;; to try
      ;; templates
@@ -130,25 +141,22 @@ This function should only modify configuration layer settings."
    ;; dotspacemacs-additional-packages '(flycheck-pycheckers traad sicp evil-text-object-python)
    dotspacemacs-additional-packages '(;; traad
                                       ;; beacon
-                                            nov ; epub
-                                            keyfreq
+                                            ;; nov ; epub
+                                            ;; keyfreq
                                             evil-replace-with-register
                                             litable
-                                            sicp
+                                            ;; sicp
                                             evil-text-object-python
                                             eros
                                             chronometer
                                             jupyter
                                             envrc
+                                            ;; direnv
                                             sql-presto
                                             (nodejs-repl-eval :location (recipe :fetcher git
                                                                                 :url "https://gist.github.com/emallson/0eae865bc99fc9639fac.git"))
                                             (cljstyle-mode :location (recipe :fetcher github
                                                                              :repo "jstokes/cljstyle-mode"))
-                                            (copilot :location (recipe
-                                                                :fetcher github
-                                                                :repo "zerolfx/copilot.el"
-                                                                :files ("*.el" "dist")))
                                             foreman-mode
                                             fcitx
                                             gptel
@@ -661,9 +669,9 @@ you should place your code here."
 
   (require 'gptel)
 
-  (fcitx-prefix-keys-add "M-m")
-  (fcitx-aggressive-setup)
   (when (spacemacs/system-is-linux)
+    (fcitx-prefix-keys-add "M-m")
+    (fcitx-aggressive-setup)
     (setq fcitx-use-dbus t))
 
   (global-so-long-mode 1)
@@ -746,7 +754,9 @@ you should place your code here."
     :config
     (envrc-global-mode))
 
-
+  ;; (use-package direnv
+  ;;   :config
+  ;;   (direnv-mode))
 
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
@@ -811,7 +821,7 @@ you should place your code here."
   (setq python-shell-completion-native-enable nil)
   ;; (setq python-shell-extra-pythonpaths (list "/home/martin/ambi/ambi_brain"))
   ;; (setenv "PYTHONPATH" "/home/martin/ambi/ambi_brain")
-  (setenv "PIPENV_VENV_IN_PROJECT" "1")
+  ;; (setenv "PIPENV_VENV_IN_PROJECT" "1")
   ;; (setenv "PIPENV_PYTHON" "$PYENV_ROOT/shims/python")
   (add-hook 'python-mode-hook 'pyvenv-mode )
 
@@ -1153,15 +1163,16 @@ This function is called at the very end of Spacemacs initialization."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cider-format-code-options '(("indents" (("ns" (("inner" 0)))))))
- '(cider-print-fn 'puget)
+ '(cider-print-fn 'puget t)
  '(evil-want-Y-yank-to-eol nil)
  '(evil-want-abbrev-expand-on-insert-exit nil)
  '(ispell-program-name "ispell")
  '(lsp-enable-snippet nil)
  '(magit-diff-refine-hunk 'all)
+ '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(package-selected-packages
-   '(fcitx kaocha-runner cljstyle-mode flyspell-correct-helm flyspell-correct auto-dictionary nodejs-repl-eval slack circe oauth2 emojify emoji-cheat-sheet-plus company-emoji foreman-mode prodigy typing-game vterm treemacs-persp lsp-ui direnv company helm lsp-mode markdown-mode treemacs cfrs posframe ht projectile git-commit with-editor transient dash helm-core all-the-icons async org-plus-contrib helpful elisp-refs tide typescript-mode import-js grizzl counsel-gtags package-lint flycheck-elsa emr clang-format list-utils packed org-roam emacsql-sqlite3 selectric-mode lsp-treemacs cider anaconda-mode iedit magit pythonic bind-key rjsx-mode nodejs-repl livid-mode json-navigator hierarchy js2-refactor js-doc company-tern tern evil-adjust clojure-snippets cider-eval-sexp-fu queue parseedn clojure-mode parseclj a slime-company slime common-lisp-snippets csv-mode dap-mode bui tree-mode gnu-elpa-keyring-update web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode helm-css-scss haml-mode emmet-mode counsel-css counsel swiper ivy company-web web-completion-data add-node-modules-path ob-ipython dash-functional ein skewer-mode polymode js2-mode jupyter websocket simple-httpd zmq eros nov esxml stickyfunc-enhance srefactor beacon litable command-log-mode sql-indent keyfreq evil-replace-with-register annoying-arrows-mode evil-text-object-python flycheck-pycheckers yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil traad toc-org symon symbol-overlay string-inflection spaceline-all-the-icons smeargle sicp shell-pop restart-emacs rainbow-delimiters pytest pyenv-mode py-isort popwin pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless mwim multi-term move-text magit-svn magit-gitflow macrostep lorem-ipsum live-py-mode link-hint jinja2-mode insert-shebang indent-guide importmagic ibuffer-projectile hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist geiser fuzzy forge font-lock+ flycheck-pos-tip flycheck-package flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish diff-hl deft define-word cython-mode counsel-projectile copy-as-format company-statistics company-shell company-quickhelp company-ansible company-anaconda column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-compile ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
+   '(origami git-modes popup yasnippet keycast shfmt evil company-nixos-options helm-nixos-options nix-mode nixos-options helm-ag helm-cider helm-comint helm-dash helm-ls-git helm-org wfnames counsel-dash flyspell-correct-ivy ivy-avy ivy-hydra ivy-purpose ivy-xref ivy-yasnippet smex wgrep ggtags ron-mode rustic rust-mode toml-mode anaphora sqlup-mode fcitx kaocha-runner cljstyle-mode flyspell-correct-helm flyspell-correct auto-dictionary nodejs-repl-eval slack circe oauth2 emojify emoji-cheat-sheet-plus company-emoji foreman-mode prodigy typing-game vterm treemacs-persp lsp-ui direnv company helm lsp-mode markdown-mode treemacs cfrs posframe ht projectile git-commit with-editor transient dash helm-core all-the-icons async org-plus-contrib helpful elisp-refs tide typescript-mode import-js grizzl counsel-gtags package-lint flycheck-elsa emr clang-format list-utils packed org-roam emacsql-sqlite3 selectric-mode lsp-treemacs cider anaconda-mode iedit magit pythonic bind-key rjsx-mode nodejs-repl livid-mode json-navigator hierarchy js2-refactor js-doc company-tern tern evil-adjust clojure-snippets cider-eval-sexp-fu queue parseedn clojure-mode parseclj a slime-company slime common-lisp-snippets csv-mode dap-mode bui tree-mode gnu-elpa-keyring-update web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode helm-css-scss haml-mode emmet-mode counsel-css counsel swiper ivy company-web web-completion-data add-node-modules-path ob-ipython dash-functional ein skewer-mode polymode js2-mode jupyter websocket simple-httpd zmq eros nov esxml stickyfunc-enhance srefactor beacon litable command-log-mode sql-indent keyfreq evil-replace-with-register annoying-arrows-mode evil-text-object-python flycheck-pycheckers yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil traad toc-org symon symbol-overlay string-inflection spaceline-all-the-icons smeargle sicp shell-pop restart-emacs rainbow-delimiters pytest pyenv-mode py-isort popwin pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless mwim multi-term move-text magit-svn magit-gitflow macrostep lorem-ipsum live-py-mode link-hint jinja2-mode insert-shebang indent-guide importmagic ibuffer-projectile hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet google-translate golden-ratio gnuplot gitignore-templates github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist geiser fuzzy forge font-lock+ flycheck-pos-tip flycheck-package flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish diff-hl deft define-word cython-mode counsel-projectile copy-as-format company-statistics company-shell company-quickhelp company-ansible company-anaconda column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-compile ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
  '(python-shell-interpreter "python3")
  '(safe-local-variable-values
    '((cider-known-endpoints
